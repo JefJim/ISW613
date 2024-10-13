@@ -1,5 +1,4 @@
 <?php
-require('../utils/functions.php');
 // Verificar que se haya pasado el parámetro de horas al script
 if ($argc < 2) {
     die("Uso: php validateActiveSessions.php <horas>\n");
@@ -7,7 +6,8 @@ if ($argc < 2) {
 
 // get parameter inserted by user
 $hours_limit = (int) $argv[1];
-$conn = getConnection();
+$conn = mysqli_connect('localhost:3306', 'root', '', 'workshop3');
+
 
 // sql for get all users with status active and last login 
 $sql = "SELECT id, last_login_datetime FROM users WHERE status = 'active'";
@@ -30,7 +30,7 @@ if ($result->num_rows > 0) {
     // Si hay usuarios que deben ser inactivados, ejecutar la actualización
     if (!empty($users_inactive)) {
         $ids_inactive= implode(',', $users_inactive);
-        $update_sql = "UPDATE user SET status = 'inactive' WHERE id IN ($ids_inactive)";
+        $update_sql = "UPDATE users SET status = 'inactive' WHERE id IN ($ids_inactive)";
 
         if ($conn->query($update_sql) === TRUE) {
             echo "Usuarios marcados como 'inactive': " . count($users_inactive) . "\n";
